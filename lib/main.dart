@@ -9,8 +9,8 @@ void main() async {
   // initialise hive and register adapters
   await Hive.initFlutter();
   //register adapter
-  Hive.registerAdapter(TaskAdapter);
-  await Hive.openBox<Task>('tasks');
+  Hive.registerAdapter(TaskAdapter);//Register task adapter
+  await Hive.openBox<Task>('tasks');//Open a hive box for tasks
 
   runApp(const MyApp());
 }
