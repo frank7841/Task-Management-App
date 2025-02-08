@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 
+import 'models/task.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //initialise firebase
@@ -9,7 +11,7 @@ void main() async {
   // initialise hive and register adapters
   await Hive.initFlutter();
   //register adapter
-  Hive.registerAdapter(TaskAdapter);//Register task adapter
+  Hive.registerAdapter(TaskAdapter());//Register task adapter
   await Hive.openBox<Task>('tasks');//Open a hive box for tasks
 
   runApp(const MyApp());
