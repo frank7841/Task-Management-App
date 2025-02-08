@@ -4,11 +4,13 @@ import '../models/task.dart';
 import '../repositories/task_repository.dart';
 
 final taskRepositoryProvider = Provider((ref) => TaskRepository());
-final taskProvider = StateNotifierProvider((ref) => TaskNotifier(ref.read(taskRepositoryProvider)));
-class TaskNotifier extends StateNotifier<List<Task>> {
+final taskListProvider = StateNotifierProvider<TaskListNotifier, List<Task>>((ref){
+  return TaskListNotifier(ref.watch(taskRepositoryProvider));
+});
+class TaskListNotifier extends StateNotifier<List<Task>> {
   final TaskRepository _taskRepository;
 
-  TaskNotifier(this._taskRepository) : super([]);
+  TaskListNotifier(this._taskRepository) : super([]);
 
   void addTask(Task task) {
     _taskRepository.addTask(task);
