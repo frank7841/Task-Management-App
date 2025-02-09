@@ -10,11 +10,13 @@ final taskListProvider = StateNotifierProvider<TaskListNotifier, List<Task>>((re
 class TaskListNotifier extends StateNotifier<List<Task>> {
   final TaskRepository _taskRepository;
 
-  TaskListNotifier(this._taskRepository) : super([]);
+  TaskListNotifier(this._taskRepository) : super([]){
+    getTasks();//fetch tasks from the repository on initialisation
+  }
 
   void addTask(Task task) {
-    _taskRepository.addTask(task);
-    state = [...state, task];
+    _taskRepository.createTask(task);
+    state = [...state, task];//update the state with new task
   }
 
   void updateTask(Task task) {
@@ -24,8 +26,15 @@ class TaskListNotifier extends StateNotifier<List<Task>> {
 
   void deleteTask(String id) {
     _taskRepository.deleteTask(id);
-    state = state.where((t) => t.id != id).toList();
+    state = state.where((t) => t.id != id).toList();//removes the task from the state
   }
+  void completeTask(String id) {
+    _taskRepository.completeTask(id);
+    final task = state.firstWhere((t) => t.id == id);
+    task.isDone = true;//mrk the task as completed
+    updateTask(task); //update task in the state
+
+     }
 
   void getTasks() {
     state = _taskRepository.getTasks();
