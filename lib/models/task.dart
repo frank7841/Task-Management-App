@@ -23,6 +23,8 @@ class Task {
     this.isDone = false, // Default to not completed
   });
 
+
+
   // Factory constructor for creating a Task from a Map
   factory Task.fromMap(Map<String, dynamic> map) {
     return Task(
@@ -42,4 +44,19 @@ class Task {
       'isDone': isDone,
     };
   }
-}//TODO use changeNotifierProvider instead of stateNotifierProvider
+
+  // Factory method to create a new Task with updated values
+  Task update({
+    String? title,
+    String? description,
+    bool? isDone,
+  }) {
+    return Task(
+      id: id, // Keep the same ID
+      title: title ?? this.title,
+      description: description ?? this.description,
+      isDone: isDone ?? this.isDone,
+    );
+  }
+}
+//TODO use changeNotifierProvider instead of stateNotifierProvider
