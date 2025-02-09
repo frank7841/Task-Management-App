@@ -25,6 +25,7 @@ class TaskListNotifier extends StateNotifier<List<Task>> {
       syncTasks(); //sync tasks from firestore when online
     }
   }
+  //Sync tasks from firestore
 
   Future<void> syncTasks() async {
     if (_isOnline) {
@@ -64,8 +65,6 @@ class TaskListNotifier extends StateNotifier<List<Task>> {
   void getTasks() {
     state = _taskRepository.getTasks();
   }
-
-  //Sync tasks from firestore
 
   bool get isOnline => _isOnline; // Getter for online status
   bool get isSyncing => _isSyncing; // Getter for syncing status

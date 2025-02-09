@@ -73,6 +73,7 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
                       title: _titleController.text,
                       description: _descriptionController.text,
                       isDone: _isDone,
+                      lastUpdated: DateTime.now()
                     );
 
                     // Update the task in the repository

@@ -1,9 +1,11 @@
 import 'package:hive/hive.dart';
+import 'package:logger/logger.dart';
 import 'package:task_management_app/services/firestore_service.dart';
 
 import '../models/task.dart';
 
 class TaskRepository{
+  final logger = Logger();
 final Box<Task> _taskBox = Hive.box<Task>('tasks');//instance of hive box
 final FirestoreService _firestoreService = FirestoreService();//instance of firestore service
 
@@ -13,9 +15,14 @@ final FirestoreService _firestoreService = FirestoreService();//instance of fire
   }
 
   Future<void> updateTask(Task task) async {
-    await _taskBox.put(task.id, task);//update locally
-    await _firestoreService.updateTask(task);//update in firebase
-  }
+    try{
+      await _taskBox.put(task.id, task);//update locally
+      await _firestoreService.updateTask(task);//update in firebase
+
+    }catch(e){
+      logger.e('Error updating task: $e');
+    }
+      }
 
   Future<void> deleteTask(String id) async {
     await _taskBox.delete(id);//delete locally

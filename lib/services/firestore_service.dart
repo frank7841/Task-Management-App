@@ -18,13 +18,29 @@ class FirestoreService {
   }
   //update existing task in firestore
 Future<void> updateTask(Task task) async {
-    try {
-      await _firestore.collection('tasks').doc(task.id).update(task.toMap());
-      logger.i('Task updated successfully');
-    } catch (e) {
-      throw Exception('Failed to update task: $e');
+  try {
+    // Get the remote task from Firestore
+    final remoteTaskDoc = await _firestore.collection('tasks').doc(task.id).get();
+
+    // Check if the remote task exists and compare timestamps
+    if (remoteTaskDoc.exists) {
+      final remoteTask = Task.fromMap(remoteTaskDoc.data()!); // Convert Firestore data to Task
+      if (remoteTask.lastUpdated.isAfter(task.lastUpdated)) {
+        // Remote task is newer, so discard the local update
+        logger.d('Conflict detected: Remote task is newer. Local changes discarded.');
+        return;
+      }
     }
+
+    // Save the updated task to Firestore
+    await _firestore.collection('tasks').doc(task.id).update(task.toMap());
+
+    logger.i('Task updated successfully.');
+  } catch (e) {
+    logger.e('Error updating task: $e');
   }
+}
+
   //delete task from firestore
 Future<void> deleteTask(String id) async {
     try {

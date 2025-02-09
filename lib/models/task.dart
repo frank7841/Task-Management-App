@@ -16,11 +16,14 @@ class Task {
   @HiveField(3)
   bool isDone; // Field to track task completion
 
+  @HiveField(4)
+  final DateTime lastUpdated;
   Task({
     required this.id,
     required this.title,
     required this.description,
     this.isDone = false, // Default to not completed
+    required this.lastUpdated, //Adding a timestamp
   });
 
 
@@ -32,6 +35,7 @@ class Task {
       title: map['title'] as String,
       description: map['description'] as String,
       isDone: map['isDone'] as bool? ?? false,
+      lastUpdated: map['lastUpdated'].todate()
     );
   }
 
@@ -42,6 +46,7 @@ class Task {
       'title': title,
       'description': description,
       'isDone': isDone,
+      'lastUpdated':lastUpdated
     };
   }
 
@@ -50,12 +55,14 @@ class Task {
     String? title,
     String? description,
     bool? isDone,
+    DateTime? lastUpdated,
   }) {
     return Task(
       id: id, // Keep the same ID
       title: title ?? this.title,
       description: description ?? this.description,
       isDone: isDone ?? this.isDone,
+      lastUpdated: lastUpdated ?? DateTime.now(),
     );
   }
 }

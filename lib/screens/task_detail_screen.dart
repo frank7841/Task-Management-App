@@ -61,6 +61,7 @@ class TaskDetailScreen extends ConsumerWidget {
                       id: DateTime.now().toString(), // Generate a unique ID
                       title: _titleController.text.trim(),
                       description: _descriptionController.text.trim(),
+                      lastUpdated: DateTime.now()
                     );
 
                     // Log the task details before adding
