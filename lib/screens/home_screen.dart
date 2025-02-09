@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:task_management_app/providers/task_provider.dart';
+import 'package:task_management_app/screens/edit_task_screen.dart';
 import 'package:task_management_app/screens/task_detail_screen.dart';
 import 'package:task_management_app/widgets/task_item.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -55,7 +56,16 @@ class HomeScreen extends ConsumerWidget {
               itemCount: tasks.length,
               itemBuilder: (context, index) {
                 final task = tasks[index];
-                return TaskItem(task: task);
+                return TaskItem(
+                  task: task,
+                  onTap: () {
+                    //Navigate to Edit task screen
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditTaskScreen(task: task)));
+                  },
+                );
               },
             ),
           ),

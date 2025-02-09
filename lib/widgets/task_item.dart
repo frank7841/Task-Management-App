@@ -6,8 +6,9 @@ import '../models/task.dart';
 
 class TaskItem extends ConsumerWidget {
   final Task task;
+  final VoidCallback onTap;  // a callback to handle when the task is tapped
 
-  const TaskItem({super.key, required this.task});
+  const TaskItem( {required this.task ,required this.onTap, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,6 +41,7 @@ class TaskItem extends ConsumerWidget {
         },
         icon: const Icon(Icons.delete),
       ),
+      onTap: onTap,
     );
   }
 }
