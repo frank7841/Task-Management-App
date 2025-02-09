@@ -13,16 +13,27 @@ class TaskListNotifier extends StateNotifier<List<Task>> {
   final TaskRepository _taskRepository;
   bool _isSyncing = false; //track the syncing process state
   bool _isOnline = false; //track offline or online status
-
+  List<Task> _unsyncedTasks = []; //list of tasks that are not synced
   TaskListNotifier(this._taskRepository) : super([]) {
     getTasks(); //fetch tasks from the repository on initialisation
   }
 
   //toggle online and offline mode
-  void toggleOnlineMode() {
-    _isOnline = !_isOnline;
+  void toggleOnlineMode(bool value) {
+    _isOnline = value; // set the toglle value to b user defines
     if (_isOnline) {
       syncTasks(); //sync tasks from firestore when online
+    }
+  }
+
+  Future<void> syncTasks() async {
+    if (_isOnline) {
+      _isSyncing = true; //set syncing state to true
+      state = [...state]; //refresh the state
+      await _taskRepository.syncTasksFromFirestore(); // sync with firestore
+
+      getTasks(); //refresh the state with the updated tasks
+      _isSyncing = false; //set syncing state to false
     }
   }
 
@@ -55,14 +66,7 @@ class TaskListNotifier extends StateNotifier<List<Task>> {
   }
 
   //Sync tasks from firestore
-  Future<void> syncTasks() async {
-    if (_isOnline) {
-      _isSyncing = true; //set syncing state to true
-      state = [...state]; //refresh the state
-      await _taskRepository.syncTasksFromFirestore(); // sync with firestore
 
-      getTasks(); //refresh the state with the updated tasks
-      _isSyncing = false; //set syncing state to false
-    }
-  }
+  bool get isOnline => _isOnline; // Getter for online status
+  bool get isSyncing => _isSyncing; // Getter for syncing status
 }

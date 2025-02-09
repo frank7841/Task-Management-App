@@ -7,6 +7,7 @@ import 'package:task_management_app/screens/home_screen.dart';
 import 'firebase_options.dart';
 import 'models/task.dart';
 
+//TODO Authentication with email and password
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //initialise firebase
