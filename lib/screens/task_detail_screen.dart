@@ -55,6 +55,8 @@ class TaskDetailScreen extends ConsumerWidget{
                         description: _descriptionController.text,
                       ),
                     );
+                    _descriptionController.clear();
+                    _titleController.clear();
                     Navigator.pop(context);
                   }
                 },

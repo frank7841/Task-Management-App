@@ -21,7 +21,7 @@ class Task {
   final String description;
 
   @HiveField(3)
-  late final bool isDone;
+  bool isDone;
 //Copy with to allow updating specific task properties
   Task copyWith({
     String? id,
