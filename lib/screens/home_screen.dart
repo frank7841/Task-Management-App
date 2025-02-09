@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:task_management_app/providers/task_provider.dart';
 import 'package:task_management_app/screens/task_detail_screen.dart';
 import 'package:task_management_app/widgets/task_item.dart';
@@ -10,6 +11,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final logger = Logger();
     final tasks = ref.watch(taskListProvider);
     final isSyncing = ref.watch(taskListProvider.notifier).isSyncing;
     final isOnline = ref.watch(taskListProvider.notifier).isOnline;
@@ -18,7 +20,7 @@ class HomeScreen extends ConsumerWidget {
         title: const Text('Task Management App'),
         actions: [
           ToggleSwitch(
-            minWidth: 90.0,
+            minWidth: 60.0,
             initialLabelIndex: isOnline ? 1 : 0,
             // Set initial index based on online state
             cornerRadius: 20.0,
@@ -26,16 +28,16 @@ class HomeScreen extends ConsumerWidget {
             inactiveBgColor: Colors.grey,
             inactiveFgColor: Colors.white,
             totalSwitches: 2,
-            labels: ['Offline', 'Online'],
-            icons: [Icons.offline_bolt, Icons.wifi],
+            labels: const ['Off', 'On'],
+            icons: const [Icons.offline_bolt, Icons.wifi],
             // Use appropriate icons
-            activeBgColors: [
+            activeBgColors: const [
               [Colors.red],
               [Colors.green]
             ],
             // Colors for active states
             onToggle: (index) {
-              print('switched to: $index');
+              logger.d('switched to: $index');
               ref
                   .read(taskListProvider.notifier)
                   .toggleOnlineMode(index == 1); // Update online state

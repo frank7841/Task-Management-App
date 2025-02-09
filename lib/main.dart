@@ -2,7 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:task_management_app/screens/auth_wrapper.dart';
 import 'package:task_management_app/screens/home_screen.dart';
+import 'package:task_management_app/screens/login_screen.dart';
+import 'package:task_management_app/screens/register_screen.dart';
 
 import 'firebase_options.dart';
 import 'models/task.dart';
@@ -33,7 +36,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: HomeScreen(),
+      routes: {
+        '/auth': (context) =>  AuthWrapper(),
+        '/register': (context) => RegisterScreen(),
+        '/login': (context) => LoginScreen(),
+        '/home': (context) => const HomeScreen()
+      },
+      home: AuthWrapper(),
     );
   }
 }
