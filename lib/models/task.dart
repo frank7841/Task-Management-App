@@ -1,16 +1,9 @@
 import 'package:hive/hive.dart';
 
-part 'task.g.dart'; // This line is required
+part 'task.g.dart'; // This will be generated
 
-@HiveType(typeId: 0) // Unique typeId for Hive
+@HiveType(typeId: 0)
 class Task {
-  Task({
-    required this.id,
-    required this.title,
-    this.description = '',
-    this.isDone = false,
-  });
-
   @HiveField(0)
   final String id;
 
@@ -21,19 +14,12 @@ class Task {
   final String description;
 
   @HiveField(3)
-  bool isDone;
-//Copy with to allow updating specific task properties
-  Task copyWith({
-    String? id,
-    String? title,
-    String? description,
-    bool? isDone,
-  }) {
-    return Task(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      isDone: isDone ?? this.isDone,
-    );
-  }
+  bool isDone; // Field to track task completion
+
+  Task({
+    required this.id,
+    required this.title,
+    required this.description,
+    this.isDone = false, // Default to not completed
+  });
 }
