@@ -25,13 +25,6 @@ class HomeScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          ref.read(taskListProvider.notifier).addTask(
-                Task(
-                  id: DateTime.now().toString(),
-                  title: 'Task ${tasks.length + 1}',
-                  description: 'Description ${tasks.length + 1}',
-                ),
-              );
           Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailScreen()));
         },
         child: const Icon(Icons.add),

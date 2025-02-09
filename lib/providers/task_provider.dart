@@ -31,7 +31,7 @@ class TaskListNotifier extends StateNotifier<List<Task>> {
   void completeTask(String id) {
     _taskRepository.completeTask(id);
     final task = state.firstWhere((t) => t.id == id);
-    task.isDone = true;//mrk the task as completed
+    task.isDone = true;//mark the task as completed
     updateTask(task); //update task in the state
 
      }
