@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_management_app/providers/task_provider.dart';
+import 'package:task_management_app/screens/task_detail_screen.dart';
+import 'package:task_management_app/widgets/task_item.dart';
 
 import '../models/task.dart';
 
@@ -16,14 +18,7 @@ class HomeScreen extends ConsumerWidget {
         itemCount: tasks.length,
         itemBuilder: (context, index) {
           final task = tasks[index];
-          return ListTile(
-            title: Text(task.title),
-            subtitle: Text(task.description),
-            trailing: Checkbox(
-              value: task.isDone,
-              onChanged: (value) {},
-            ),
-          );
+          return TaskItem(task: task);
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -35,6 +30,7 @@ class HomeScreen extends ConsumerWidget {
                   description: 'Description ${tasks.length + 1}',
                 ),
               );
+          Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailScreen()));
         },
         child: const Icon(Icons.add),
       ),
