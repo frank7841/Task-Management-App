@@ -39,4 +39,9 @@ class TaskListNotifier extends StateNotifier<List<Task>> {
   void getTasks() {
     state = _taskRepository.getTasks();
   }
+  //Sync tasks from firestore
+Future<void>syncTasks()async{
+    await _taskRepository.syncTasksFromFirestore();
+    getTasks();//refresh the state with the updated tasks
+}
 }

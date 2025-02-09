@@ -33,4 +33,10 @@ Future<void>completeTask(String id) async {
   List<Task> getTasks() {
     return _taskBox.values.toList();
   }
+  Future<void>syncTasksFromFirestore() async {
+    List<Task> tasks = await _firestoreService.fetchTasks();
+    for (var task in tasks) {
+      await _taskBox.put(task.id, task);//save to local hive box
+    }
+  }
 }
