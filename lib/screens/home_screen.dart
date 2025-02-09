@@ -7,6 +7,8 @@ import 'package:task_management_app/widgets/task_item.dart';
 import '../models/task.dart';
 
 class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasks = ref.watch(taskListProvider);
