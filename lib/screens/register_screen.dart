@@ -53,7 +53,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     );
                     if (user != null) {
                       // Navigate to the home screen
-                      Navigator.pushReplacementNamed(context, '/home');
+                      Navigator.pushReplacementNamed(context, '/login');
                     }
                   }
                 },
