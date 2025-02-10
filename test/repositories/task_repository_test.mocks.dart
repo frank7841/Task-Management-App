@@ -333,40 +333,61 @@ class MockFirestoreService extends _i1.Mock implements _i7.FirestoreService {
       ) as _i2.Logger);
 
   @override
-  _i6.Future<void> addTask(_i4.Task? task) => (super.noSuchMethod(
+  _i6.Future<void> addTask(
+    String? userId,
+    _i4.Task? task,
+  ) =>
+      (super.noSuchMethod(
         Invocation.method(
           #addTask,
-          [task],
+          [
+            userId,
+            task,
+          ],
         ),
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
 
   @override
-  _i6.Future<void> updateTask(_i4.Task? task) => (super.noSuchMethod(
+  _i6.Future<void> updateTask(
+    String? userId,
+    _i4.Task? task,
+  ) =>
+      (super.noSuchMethod(
         Invocation.method(
           #updateTask,
-          [task],
+          [
+            userId,
+            task,
+          ],
         ),
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
 
   @override
-  _i6.Future<void> deleteTask(String? id) => (super.noSuchMethod(
+  _i6.Future<void> deleteTask(
+    String? userId,
+    String? id,
+  ) =>
+      (super.noSuchMethod(
         Invocation.method(
           #deleteTask,
-          [id],
+          [
+            userId,
+            id,
+          ],
         ),
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
 
   @override
-  _i6.Future<List<_i4.Task>> fetchTasks() => (super.noSuchMethod(
+  _i6.Future<List<_i4.Task>> fetchTasks(String? userId) => (super.noSuchMethod(
         Invocation.method(
           #fetchTasks,
-          [],
+          [userId],
         ),
         returnValue: _i6.Future<List<_i4.Task>>.value(<_i4.Task>[]),
         returnValueForMissingStub:

@@ -6,62 +6,61 @@ import '../models/task.dart';
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final logger = Logger();
-
+// Fetch user-specific tasks collection
+  CollectionReference<Task> _taskCollection(String userId) {
+    return _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('tasks')
+        .withConverter<Task>(
+      fromFirestore: (snapshot, _) => Task.fromMap(snapshot.data()!),
+      toFirestore: (task, _) => task.toMap(),
+    );
+  }
   //Add new task document to firestore
-  Future<void> addTask(Task task) async {
+  Future<void> addTask(String userId, Task task) async {
     try {
-      await _firestore.collection('tasks').doc(task.id).set(task.toMap());
-      logger.i('Task added successfully');
+      await _taskCollection(userId).doc(task.id).set(task);
+      logger.i('Task added successfully for user: $userId');
     } catch (e) {
       throw Exception('Failed to add task: $e');
     }
   }
   //update existing task in firestore
-Future<void> updateTask(Task task) async {
+Future<void> updateTask(String userId, Task task) async {
   try {
-    // Get the remote task from Firestore
-    final remoteTaskDoc = await _firestore.collection('tasks').doc(task.id).get();
+    final taskRef = _taskCollection(userId).doc(task.id);
+    final remoteTaskDoc = await taskRef.get();
 
-    // Check if the remote task exists and compare timestamps
     if (remoteTaskDoc.exists) {
-      final remoteTask = Task.fromMap(remoteTaskDoc.data()!); // Convert Firestore data to Task
+      final remoteTask = remoteTaskDoc.data()!;
       if (remoteTask.lastUpdated.isAfter(task.lastUpdated)) {
-        // Remote task is newer, so discard the local update
         logger.d('Conflict detected: Remote task is newer. Local changes discarded.');
         return;
       }
     }
 
-    // Save the updated task to Firestore
-    await _firestore.collection('tasks').doc(task.id).update(task.toMap());
-
-    logger.i('Task updated successfully.');
+    await taskRef.update(task.toMap());
+    logger.i('Task updated successfully for user: $userId');
   } catch (e) {
     logger.e('Error updating task: $e');
   }
 }
 
   //delete task from firestore
-Future<void> deleteTask(String id) async {
-    try {
-      await _firestore.collection('tasks').doc(id).delete();
-      logger.i('Task deleted successfully');
-    } catch (e) {
+Future<void> deleteTask(String userId, String id) async {
+  try {
+    await _taskCollection(userId).doc(id).delete();
+    logger.i('Task deleted successfully for user: $userId');
+  } catch (e) {
       throw Exception('Failed to delete task: $e');
     }
   }
   //retrieve all tasks from firestore
-  Future<List<Task>> fetchTasks() async {
+  Future<List<Task>> fetchTasks(String userId) async {
     try {
-      final querySnapshot = await _firestore.collection('tasks').get();
-      return querySnapshot.docs.map((doc) {
-        // Get the data as a Map<String, dynamic>
-        final data = doc.data();
-        if (data == null) {
-          throw Exception('Document data is null');
-        }
-        return Task.fromMap(data);
-      }).toList();
+      final querySnapshot = await _taskCollection(userId).get();
+      return querySnapshot.docs.map((doc) => doc.data()).toList();
     } catch (e) {
       throw Exception('Failed to get tasks: $e');
     }

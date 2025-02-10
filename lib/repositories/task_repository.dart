@@ -8,16 +8,14 @@ class TaskRepository {
   final logger = Logger();
   final Box<Task> _taskBox;
   final FirestoreService _firestoreService;
+  final String userId;
 
-  TaskRepository(this._taskBox, this._firestoreService);
+  TaskRepository(this._taskBox, this._firestoreService, this.userId);
 
-//   final Box<Task> _taskBox = Hive.box<Task>('tasks');//instance of hive box
-// final FirestoreService _firestoreService = FirestoreService();//instance of firestore service
-
-  Future<void> createTask(Task task) async {
+  Future<void> createTask(Task task, String userId) async {
     try {
       await _taskBox.put(task.id, task); //save locally
-      await _firestoreService.addTask(task); //save to firebase
+      await _firestoreService.addTask(userId, task); //save to firebase
     } catch (e) {
       logger.e('Error adding task: $e');
     }
@@ -26,7 +24,7 @@ class TaskRepository {
   Future<void> updateTask(Task task) async {
     try {
       await _taskBox.put(task.id, task); //update locally
-      await _firestoreService.updateTask(task); //update in firebase
+      await _firestoreService.updateTask(userId, task); //update in firebase
     } catch (e) {
       logger.e('Error updating task: $e');
     }
@@ -34,7 +32,7 @@ class TaskRepository {
 
   Future<void> deleteTask(String id) async {
     await _taskBox.delete(id); //delete locally
-    await _firestoreService.deleteTask(id); //delete in firebase
+    await _firestoreService.deleteTask(userId, id); //delete in firebase
   }
 
   //mark task as completed
@@ -51,7 +49,7 @@ class TaskRepository {
   }
 
   Future<void> syncTasksFromFirestore() async {
-    List<Task> tasks = await _firestoreService.fetchTasks();
+    List<Task> tasks = await _firestoreService.fetchTasks(userId);
     for (var task in tasks) {
       await _taskBox.put(task.id, task); //save to local hive box
     }

@@ -27,7 +27,7 @@ void main() async {
     overrides: [
       hiveBoxProvider.overrideWithValue(taskBox),
     ],
-      child: MyApp()));
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -49,6 +49,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
 
       },
+      debugShowCheckedModeBanner: false,
       home: AuthWrapper(),
     );
   }

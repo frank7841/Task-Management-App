@@ -7,3 +7,7 @@ final authStateProvider = StreamProvider((ref) {
   final authService = ref.watch(authProvider);
   return authService.authStateChanges;
 });
+final userIdProvider = Provider<String?>((ref) {
+  final authState = ref.watch(authStateProvider);
+  return authState.asData?.value?.uid;
+});
