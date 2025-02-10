@@ -6,21 +6,20 @@ import '../repositories/task_repository.dart';
 final taskRepositoryProvider = Provider((ref) => TaskRepository());
 final taskListProvider =
     StateNotifierProvider<TaskListNotifier, List<Task>>((ref) {
-  return TaskListNotifier(ref.watch(taskRepositoryProvider));
+  return TaskListNotifier(ref.watch(taskRepositoryProvider), taskRepository: null);
 });
 
 class TaskListNotifier extends StateNotifier<List<Task>> {
   final TaskRepository _taskRepository;
   bool _isSyncing = false; //track the syncing process state
   bool _isOnline = false; //track offline or online status
-  List<Task> _unsyncedTasks = []; //list of tasks that are not synced
-  TaskListNotifier(this._taskRepository) : super([]) {
+  TaskListNotifier(this._taskRepository, {required taskRepository}) : super([]) {
     getTasks(); //fetch tasks from the repository on initialisation
   }
 
   //toggle online and offline mode
   void toggleOnlineMode(bool value) {
-    _isOnline = value; // set the toglle value to b user defines
+    _isOnline = value; // set the toggle value to be user defined
     if (_isOnline) {
       syncTasks(); //sync tasks from firestore when online
     }
@@ -30,7 +29,7 @@ class TaskListNotifier extends StateNotifier<List<Task>> {
   Future<void> syncTasks() async {
     if (_isOnline) {
       _isSyncing = true; //set syncing state to true
-      state = [...state]; //refresh the state
+            state = [...state]; //refresh the state
       await _taskRepository.syncTasksFromFirestore(); // sync with firestore
 
       getTasks(); //refresh the state with the updated tasks

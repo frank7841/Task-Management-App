@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 
 part 'task.g.dart'; // This will be generated
@@ -35,7 +36,7 @@ class Task {
       title: map['title'] as String,
       description: map['description'] as String,
       isDone: map['isDone'] as bool? ?? false,
-      lastUpdated: map['lastUpdated'].todate()
+      lastUpdated: (map['lastUpdated'] as Timestamp).toDate(),
     );
   }
 
@@ -62,7 +63,7 @@ class Task {
       title: title ?? this.title,
       description: description ?? this.description,
       isDone: isDone ?? this.isDone,
-      lastUpdated: lastUpdated ?? DateTime.now(),
+      lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
 }

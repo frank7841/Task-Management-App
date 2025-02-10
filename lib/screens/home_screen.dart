@@ -18,7 +18,7 @@ class HomeScreen extends ConsumerWidget {
     final isOnline = ref.watch(taskListProvider.notifier).isOnline;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Task Management App'),
+        title: const Text('Tasks'),
         actions: [
           ToggleSwitch(
             minWidth: 60.0,
@@ -39,6 +39,7 @@ class HomeScreen extends ConsumerWidget {
             // Colors for active states
             onToggle: (index) {
               logger.d('switched to: $index');
+
               ref
                   .read(taskListProvider.notifier)
                   .toggleOnlineMode(index == 1); // Update online state

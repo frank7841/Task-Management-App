@@ -65,7 +65,7 @@ class TaskDetailScreen extends ConsumerWidget {
                     );
 
                     // Log the task details before adding
-                    logger.d("Creating task: Title: '${newTask.title}', Description: '${newTask.description}'");
+                    logger.d("Creating task: Title: '${newTask.title}', Description: '${newTask.description}' LastUpdates: '${newTask.lastUpdated}'");
 
                     // Add the new task to the state
                     ref.read(taskListProvider.notifier).addTask(newTask);

@@ -51,10 +51,17 @@ Future<void> deleteTask(String id) async {
     }
   }
   //retrieve all tasks from firestore
-Future<List<Task>> fetchTasks() async {
+  Future<List<Task>> fetchTasks() async {
     try {
       final querySnapshot = await _firestore.collection('tasks').get();
-      return querySnapshot.docs.map((doc) => Task.fromMap(doc.data())).toList();
+      return querySnapshot.docs.map((doc) {
+        // Get the data as a Map<String, dynamic>
+        final data = doc.data();
+        if (data == null) {
+          throw Exception('Document data is null');
+        }
+        return Task.fromMap(data);
+      }).toList();
     } catch (e) {
       throw Exception('Failed to get tasks: $e');
     }
