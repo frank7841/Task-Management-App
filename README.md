@@ -69,7 +69,16 @@ update based on the `lastUpdated` timestamp. This ensures that the latest change
 Integrated Firebase Authentication to allow users to sign up and log in using email and password.
 This feature ensures that each user's tasks are stored securely and can be accessed from multiple
 devices.
+## Suggested Improvements
 
+### 3. Offline Notifications
+
+This feature can help the User to not overlook tasks that are due when the app is offline. The app
+### 4. Task Filtering
+Allow filtering such that the user can measure their productivity
+
+### 5. Dark Mode Support
+implement dark mode to  enhances the user experience, especially in low-light environments.
 
 ## Overview
 
