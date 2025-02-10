@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:task_management_app/providers/task_provider.dart';
 import 'package:task_management_app/screens/auth_wrapper.dart';
 import 'package:task_management_app/screens/edit_task_screen.dart';
 import 'package:task_management_app/screens/home_screen.dart';
@@ -20,9 +21,13 @@ void main() async {
   await Hive.initFlutter();
   //register adapter
   Hive.registerAdapter(TaskAdapter()); //Register task adapter
-  await Hive.openBox<Task>('tasks'); //Open a hive box for tasks
+  final taskBox = await Hive.openBox<Task>('tasks'); //Open a hive box for tasks
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp( ProviderScope(
+    overrides: [
+      hiveBoxProvider.overrideWithValue(taskBox),
+    ],
+      child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

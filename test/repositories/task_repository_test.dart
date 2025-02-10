@@ -1,8 +1,10 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:task_management_app/models/task.dart';
+import 'package:task_management_app/providers/task_provider.dart';
 import 'package:task_management_app/repositories/task_repository.dart';
 import 'package:task_management_app/services/firestore_service.dart';
 
@@ -15,10 +17,15 @@ void main() {
   late MockBox mockTaskBox;
   late MockFirestoreService mockFirestoreService;
 
+  late ProviderContainer container;
+
   setUp(() {
     mockTaskBox = MockBox(); // Correctly mock Box<Task>
     mockFirestoreService = MockFirestoreService();
     taskRepository = TaskRepository(mockTaskBox, mockFirestoreService);
+    container = ProviderContainer(overrides: [
+      hiveBoxProvider.overrideWithValue(mockTaskBox),
+    ]);
 
     // Mock Hive box behavior
     when(mockTaskBox.put(any, any)).thenAnswer((_) async => {});
@@ -79,10 +86,21 @@ void main() {
     verify(mockTaskBox.put('1', task)).called(1);
     verify(mockFirestoreService.updateTask(task)).called(1);
   });
-  test('syncTasksFromFirestore() should fetch and store tasks in Hive', () async {
+  test('syncTasksFromFirestore() should fetch and store tasks in Hive',
+      () async {
     final tasks = [
-      Task(id: '1', title: 'Task 1', isDone: false, description: 'Desc 1', lastUpdated: DateTime.now()),
-      Task(id: '2', title: 'Task 2', isDone: true, description: 'Desc 2', lastUpdated: DateTime.now()),
+      Task(
+          id: '1',
+          title: 'Task 1',
+          isDone: false,
+          description: 'Desc 1',
+          lastUpdated: DateTime.now()),
+      Task(
+          id: '2',
+          title: 'Task 2',
+          isDone: true,
+          description: 'Desc 2',
+          lastUpdated: DateTime.now()),
     ];
 
     when(mockFirestoreService.fetchTasks()).thenAnswer((_) async => tasks);

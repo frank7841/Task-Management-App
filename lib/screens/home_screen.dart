@@ -18,7 +18,7 @@ class HomeScreen extends ConsumerWidget {
     final isOnline = ref.watch(taskListProvider.notifier).isOnline;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tasks'),
+        title: const Text('Acme Solutions'),
         actions: [
           ToggleSwitch(
             minWidth: 60.0,
@@ -49,6 +49,16 @@ class HomeScreen extends ConsumerWidget {
       ),
       body: Column(
         children: [
+          const Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                'Manage Your Tasks Effortlessly',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
           if (isSyncing) const LinearProgressIndicator(),
           //show progress indicator when syncing
           if (tasks.isEmpty) const Text('No tasks found'),

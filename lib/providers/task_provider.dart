@@ -1,19 +1,36 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 
 import '../models/task.dart';
 import '../repositories/task_repository.dart';
+import '../services/firestore_service.dart';
 
-final taskRepositoryProvider = Provider((ref) => TaskRepository());
+// Hive Box Provider
+final hiveBoxProvider = Provider<Box<Task>>((ref) {
+  throw UnimplementedError(); // Has been overiden in the test
+});
+
+// Firestore Service Provider
+final firestoreServiceProvider = Provider<FirestoreService>((ref) {
+  return FirestoreService();
+});
+final taskRepositoryProvider = Provider<TaskRepository>((ref) {
+  final box = ref.watch(hiveBoxProvider);
+  final firestoreService = ref.watch(firestoreServiceProvider);
+  return TaskRepository(box, firestoreService);
+});
 final taskListProvider =
     StateNotifierProvider<TaskListNotifier, List<Task>>((ref) {
-  return TaskListNotifier(ref.watch(taskRepositoryProvider), taskRepository: null);
+  return TaskListNotifier(ref.watch(taskRepositoryProvider),
+      taskRepository: null);
 });
 
 class TaskListNotifier extends StateNotifier<List<Task>> {
   final TaskRepository _taskRepository;
   bool _isSyncing = false; //track the syncing process state
   bool _isOnline = false; //track offline or online status
-  TaskListNotifier(this._taskRepository, {required taskRepository}) : super([]) {
+  TaskListNotifier(this._taskRepository, {required taskRepository})
+      : super([]) {
     getTasks(); //fetch tasks from the repository on initialisation
   }
 
@@ -24,12 +41,13 @@ class TaskListNotifier extends StateNotifier<List<Task>> {
       syncTasks(); //sync tasks from firestore when online
     }
   }
+
   //Sync tasks from firestore
 
   Future<void> syncTasks() async {
     if (_isOnline) {
       _isSyncing = true; //set syncing state to true
-            state = [...state]; //refresh the state
+      state = [...state]; //refresh the state
       await _taskRepository.syncTasksFromFirestore(); // sync with firestore
 
       getTasks(); //refresh the state with the updated tasks
