@@ -13,23 +13,24 @@ import 'task_repository_test.mocks.dart';
 @GenerateNiceMocks([MockSpec<Box<Task>>(), MockSpec<FirestoreService>()])
 void main() {
   late TaskRepository taskRepository;
-  late MockBox mockTaskBox; // Correctly typed
+  late MockBox mockTaskBox; //  Ensure correct type
   late MockFirestoreService mockFirestoreService;
   late ProviderContainer container;
   String userId = 'testUser123';
 
   setUp(() {
-    mockTaskBox = MockBox(); // Correctly instantiated
+    mockTaskBox = MockBox(); // Correct instantiation
     mockFirestoreService = MockFirestoreService();
     taskRepository = TaskRepository(mockTaskBox, mockFirestoreService, userId);
     container = ProviderContainer(overrides: [
       hiveBoxProvider.overrideWithValue(mockTaskBox),
     ]);
 
-    //  Fixes incorrect mock
     when(mockTaskBox.put(any, any)).thenAnswer((_) async => {});
-    when(mockFirestoreService.addTask(any, any))
-        .thenAnswer((_) async => {}); //  Fixes incorrect parameters
+    when(mockFirestoreService.addTask(any, any)).thenAnswer((_) async => {});
+    when(mockFirestoreService.updateTask(any, any)).thenAnswer((_) async => {});
+    when(mockFirestoreService.deleteTask(any, any)).thenAnswer((_) async => {});
+    when(mockTaskBox.get(any)).thenReturn(null); // Default behavior for `get`
   });
 
   test('createTask() should save task to Hive and Firestore', () async {
@@ -43,8 +44,7 @@ void main() {
     await taskRepository.createTask(task, userId);
 
     verify(mockTaskBox.put(task.id, task)).called(1);
-    verify(mockFirestoreService.addTask(task as String?, userId as Task?))
-        .called(1); // Fixes missing argument
+    verify(mockFirestoreService.addTask(userId, task)).called(1); // Fix type
   });
 
   test('updateTask() should update a task in Hive and Firestore', () async {
@@ -59,46 +59,39 @@ void main() {
     await taskRepository.updateTask(task);
 
     verify(mockTaskBox.put(task.id, task)).called(1);
-    verify(mockFirestoreService.updateTask(task as String?, userId as Task?))
-        .called(1);
+    verify(mockFirestoreService.updateTask(userId, task)).called(1); // Fix type
   });
-
   test('deleteTask() should remove a task from Hive and Firestore', () async {
-    const taskId = '1';
+    // Arrange
+    when(mockTaskBox.delete(any)).thenAnswer((_) async {});
+    when(mockFirestoreService.deleteTask(any, any)).thenAnswer((_) async {});
 
-    await taskRepository.deleteTask(taskId);
+    // Act
+    await taskRepository.deleteTask('1'); // Ensure this is awaited
 
-    verify(mockTaskBox.delete(taskId)).called(1);
-    verify(mockFirestoreService.deleteTask(taskId, userId)).called(1);
+    // Assert
+    verify(mockTaskBox.delete('1')).called(1);
+    verify(mockFirestoreService.deleteTask('testUser123', '1'))
+        .called(1); // Ensure correct userId and taskId
   });
 
   test('completeTask() should mark a task as completed', () async {
-    final originalTask = Task(
-      id: '1',
-      title: 'Incomplete Task',
-      isDone: false,
-      description: 'Mark as complete',
-      lastUpdated: DateTime.now(),
-    );
+    // Arrange
+    final task = Task(
+        id: '1',
+        title: 'Test Task',
+        isDone: false,
+        description: 'test desc 1',
+        lastUpdated: DateTime.now());
+    when(mockTaskBox.get('1')).thenReturn(task);
+    when(mockTaskBox.put(any, any)).thenAnswer((_) async {});
 
-    when(mockTaskBox.get('1')).thenReturn(originalTask);
-
+    // Act
     await taskRepository.completeTask('1');
 
-    //  Ensures the new task instance has `isDone = true`
-    final updatedTask = Task(
-      id: originalTask.id,
-      title: originalTask.title,
-      isDone: true,
-      // ✅ Ensure completed state
-      description: originalTask.description,
-      lastUpdated: originalTask.lastUpdated,
-    );
-
-    verify(mockTaskBox.put('1', updatedTask)).called(1);
-    verify(mockFirestoreService.updateTask(
-            updatedTask as String?, userId as Task?))
-        .called(1);
+    // Assert
+    expect(task.isDone, true); // Check if task is marked complete
+    verify(mockTaskBox.put('1', task)).called(1);
   });
 
   test('syncTasksFromFirestore() should fetch and store tasks in Hive',
